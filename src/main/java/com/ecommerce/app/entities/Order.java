@@ -1,10 +1,12 @@
 package com.ecommerce.app.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Objects;
 
@@ -18,8 +20,12 @@ public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Date moment;
+    private Instant moment;
     private OrderStatus orderStatus;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private User client;
 
     public Long getId() {
         return id;
@@ -29,11 +35,11 @@ public class Order implements Serializable {
         this.id = id;
     }
 
-    public Date getMoment() {
+    public Instant getMoment() {
         return moment;
     }
 
-    public void setMoment(Date moment) {
+    public void setMoment(Instant moment) {
         this.moment = moment;
     }
 
@@ -43,6 +49,14 @@ public class Order implements Serializable {
 
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public User getClient() {
+        return client;
+    }
+
+    public void setClient(User client) {
+        this.client = client;
     }
 
     @Override
