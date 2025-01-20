@@ -3,5 +3,7 @@ package com.ecommerce.app.repository;
 import com.ecommerce.app.entities.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
+import com.ecommerce.app.entities.pk.OrderItemPK;
+
+public interface OrderItemRepository extends JpaRepository<OrderItem, OrderItemPK> {
 }
