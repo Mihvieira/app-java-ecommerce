@@ -12,7 +12,6 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "tb_user")
-@NoArgsConstructor
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -26,6 +25,9 @@ public class User implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "client")
     private List<Order> orders = new ArrayList<>();
+
+    public User() {
+    }
 
     public User(Long id, String name, String email, String phone, String password) {
         this.id = id;

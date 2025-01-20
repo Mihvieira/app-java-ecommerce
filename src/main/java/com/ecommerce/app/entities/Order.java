@@ -3,7 +3,6 @@ package com.ecommerce.app.entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -13,7 +12,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tb_order")
-@NoArgsConstructor
 public class Order implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -27,9 +25,16 @@ public class Order implements Serializable {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private User client;
+    @JsonIgnore
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    private Payment payment;
+
 
     @OneToMany(mappedBy = "id.order")
     private Set<OrderItem> items = new HashSet<>();
+
+    public Order() {
+    }
 
     public Order(Long id, Instant moment, OrderStatus orderStatus, User client) {
         this.id = id;
@@ -54,14 +59,8 @@ public class Order implements Serializable {
         this.moment = moment;
     }
 
-    public OrderStatus getOrderStatus() {
-        return OrderStatus.valueOf(orderStatus);
-    }
-
-    public void setOrderStatus(OrderStatus orderStatus) {
-        if(orderStatus != null){
-            this.orderStatus = orderStatus.getStatus();
-        }
+    public void setOrderStatus(Integer orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
     public User getClient() {
@@ -70,6 +69,24 @@ public class Order implements Serializable {
 
     public void setClient(User client) {
         this.client = client;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
+    public OrderStatus getOrderStatus() {
+        return OrderStatus.valueOf(orderStatus);
+    }
+
+    public void setOrderStatus(OrderStatus orderStatus) {
+        if(orderStatus != null){
+            this.orderStatus = orderStatus.getStatus();
+        }
     }
 
     public Set<OrderItem> getItems() {

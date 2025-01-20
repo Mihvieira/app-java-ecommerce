@@ -3,16 +3,18 @@ package com.ecommerce.app.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+
 @Entity
 @Table(name = "tb_category")
-@NoArgsConstructor
 public class Category implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -23,6 +25,9 @@ public class Category implements Serializable {
     @JsonIgnore
     @ManyToMany(mappedBy = "categories")
     private Set<Product> products = new HashSet<>();
+
+    public Category() {
+    }
 
     public Category(Long id, String name) {
         this.id = id;
@@ -63,5 +68,13 @@ public class Category implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

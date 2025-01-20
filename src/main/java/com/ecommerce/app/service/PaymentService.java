@@ -1,7 +1,7 @@
 package com.ecommerce.app.service;
 
-import com.ecommerce.app.entities.Product;
-import com.ecommerce.app.repository.ProductRepository;
+import com.ecommerce.app.entities.Payment;
+import com.ecommerce.app.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,17 +9,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProductService {
+public class PaymentService {
 
     @Autowired
-    private ProductRepository repository;
+    private PaymentRepository repository;
 
-    public List<Product> findAll(){
+    public List<Payment> findAll(){
         return repository.findAll();
     }
 
-    public Product findById(Long id) {
-        Optional<Product> obj = repository.findById(id);
+    public Payment findById(Long id) {
+        Optional<Payment> obj = repository.findById(id);
         return obj.get();
     }
 }
