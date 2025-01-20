@@ -3,17 +3,14 @@ package com.ecommerce.app.entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Date;
 import java.util.Objects;
 
 @Entity
 @Table(name = "tb_order")
-@AllArgsConstructor
 @NoArgsConstructor
 public class Order implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -23,11 +20,18 @@ public class Order implements Serializable {
     private Long id;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
     private Instant moment;
-    private OrderStatus orderStatus;
+    private Integer orderStatus;
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "client_id")
     private User client;
+
+    public Order(Long id, Instant moment, OrderStatus orderStatus, User client) {
+        this.id = id;
+        this.moment = moment;
+        setOrderStatus(orderStatus);
+        this.client = client;
+    }
 
     public Long getId() {
         return id;
@@ -46,11 +50,13 @@ public class Order implements Serializable {
     }
 
     public OrderStatus getOrderStatus() {
-        return orderStatus;
+        return OrderStatus.valueOf(orderStatus);
     }
 
     public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+        if(orderStatus != null){
+            this.orderStatus = orderStatus.getStatus();
+        }
     }
 
     public User getClient() {
@@ -74,7 +80,7 @@ public class Order implements Serializable {
     }
 
     public Double total(){
-
+        return (double) 0;
     }
 
     @Override
