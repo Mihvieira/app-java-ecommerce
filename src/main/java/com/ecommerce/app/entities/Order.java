@@ -25,11 +25,8 @@ public class Order implements Serializable {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private User client;
-    @JsonIgnore
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;
-
-
     @OneToMany(mappedBy = "id.order")
     private Set<OrderItem> items = new HashSet<>();
 
@@ -109,8 +106,13 @@ public class Order implements Serializable {
         return Objects.hashCode(id);
     }
 
-    public Double total(){
-        return (double) 0;
+    public Double getTotal(){
+        double sum = 0.0;
+        for(OrderItem x: items){
+            sum += x.getSubtotal();
+        }
+
+        return sum;
     }
 
     @Override
