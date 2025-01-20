@@ -2,7 +2,6 @@ package com.ecommerce.app.config;
 
 import com.ecommerce.app.entities.*;
 import com.ecommerce.app.repository.*;
-import com.ecommerce.app.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
