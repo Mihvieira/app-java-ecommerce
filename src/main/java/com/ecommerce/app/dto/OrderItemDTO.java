@@ -1,20 +1,21 @@
 package com.ecommerce.app.dto;
 
+import org.springframework.beans.BeanUtils;
+
+import com.ecommerce.app.entities.OrderItem;
 import com.ecommerce.app.entities.pk.OrderItemPK;
 
-public class OrderItensDTO {
+public class OrderItemDTO {
 
     private OrderItemPK id = new OrderItemPK();
     private Integer quantity;
     private Double price;
 
-    public OrderItensDTO() {
+    public OrderItemDTO() {
     }
 
-    public OrderItensDTO(OrderItemPK id, Integer quantity, Double price) {
-        this.id = id;
-        this.quantity = quantity;
-        this.price = price;
+    public OrderItemDTO(OrderItem entity){
+        BeanUtils.copyProperties(entity, this);
     }
 
     public OrderItemPK getId() {
