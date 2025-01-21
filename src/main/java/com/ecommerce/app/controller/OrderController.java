@@ -1,5 +1,6 @@
 package com.ecommerce.app.controller;
 
+import com.ecommerce.app.dto.OrderUserDTO;
 import com.ecommerce.app.entities.Order;
 import com.ecommerce.app.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping(value = "/orders")
@@ -29,4 +31,11 @@ public class OrderController {
         Order obj = service.findById(id);
         return ResponseEntity.ok().body(obj);
     }
+
+    @GetMapping(value = "users/{id_client}")
+    public ResponseEntity<List<OrderUserDTO>> getOrdersByClient(@PathVariable Long id_client) {
+        List<OrderUserDTO> orderUser = service.findOrdersByClient(id_client);
+        return ResponseEntity.ok().body(orderUser);
+    }
+    
 }
