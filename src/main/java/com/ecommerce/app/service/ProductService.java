@@ -1,7 +1,6 @@
 package com.ecommerce.app.service;
 
 import com.ecommerce.app.entities.Product;
-import com.ecommerce.app.entities.Product;
 import com.ecommerce.app.repository.ProductRepository;
 import com.ecommerce.app.service.exceptions.ResourceNotFoundException;
 

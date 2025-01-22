@@ -1,13 +1,11 @@
 package com.ecommerce.app.dto;
 
-import org.springframework.beans.BeanUtils;
-
 import com.ecommerce.app.entities.OrderItem;
-import com.ecommerce.app.entities.pk.OrderItemPK;
 
 public class OrderItemDTO {
 
-    private OrderItemPK id = new OrderItemPK();
+    private Long id_order;
+    private Long id_product;
     private Integer quantity;
     private Double price;
 
@@ -15,15 +13,27 @@ public class OrderItemDTO {
     }
 
     public OrderItemDTO(OrderItem entity){
-        BeanUtils.copyProperties(entity, this);
+        setId_order(entity.getOrder().getId());
+        setId_product(entity.getProduct().getId());
+        setQuantity(entity.getQuantity());
+        setPrice(entity.getPrice());
     }
 
-    public OrderItemPK getId() {
-        return id;
+    
+    public Long getId_order() {
+        return id_order;
     }
 
-    public void setId(OrderItemPK id) {
-        this.id = id;
+    public void setId_order(Long id_order) {
+        this.id_order = id_order;
+    }
+
+    public Long getId_product() {
+        return id_product;
+    }
+
+    public void setId_product(Long id_product) {
+        this.id_product = id_product;
     }
 
     public Integer getQuantity() {

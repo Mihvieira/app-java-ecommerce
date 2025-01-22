@@ -1,33 +1,25 @@
 package com.ecommerce.app.dto;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
-
-import com.ecommerce.app.entities.OrderItem;
-import com.ecommerce.app.entities.Payment;
-import com.ecommerce.app.entities.User;
+import com.ecommerce.app.entities.Order;
+import com.ecommerce.app.entities.OrderStatus;
 
 public class OrderDTO {
 
     private Long id;
     private Instant moment;
-    private Integer orderStatus;
-    private User client;
-    private Payment payment;
-    private Set<OrderItem> items = new HashSet<>();
+    private OrderStatus orderStatus;
+    private Long clientId;
 
     public OrderDTO(){
 
     }
 
-    public OrderDTO(Long id, Instant moment, Integer orderStatus, User client, Payment payment, Set<OrderItem> items) {
-        this.id = id;
-        this.moment = moment;
-        this.orderStatus = orderStatus;
-        this.client = client;
-        this.payment = payment;
-        this.items = items;
+    public OrderDTO(Order entity){
+        setId(entity.getId());
+        setMoment(entity.getMoment());
+        setOrderStatus(entity.getOrderStatus());
+        setClientId(entity.getClient().getId());
     }
 
     public Long getId() {
@@ -46,38 +38,21 @@ public class OrderDTO {
         this.moment = moment;
     }
 
-    public Integer getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(Integer orderStatus) {
+    public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
-    public User getClient() {
-        return client;
+    public Long getClientId() {
+        return clientId;
     }
 
-    public void setClient(User client) {
-        this.client = client;
-    }
-
-    public Payment getPayment() {
-        return payment;
-    }
-
-    public void setPayment(Payment payment) {
-        this.payment = payment;
-    }
-
-    public Set<OrderItem> getItems() {
-        return items;
-    }
-
-    public void setItems(Set<OrderItem> items) {
-        this.items = items;
-    }
-
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
+    } 
     
 
 }

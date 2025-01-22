@@ -1,9 +1,11 @@
 package com.ecommerce.app.service;
 
-import com.ecommerce.app.entities.Category;
+import com.ecommerce.app.dto.CategoryDTO;
 import com.ecommerce.app.entities.Category;
 import com.ecommerce.app.repository.CategoryRepository;
 import com.ecommerce.app.service.exceptions.ResourceNotFoundException;
+
+import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -18,19 +21,31 @@ public class CategoryService {
     @Autowired
     private CategoryRepository repository;
 
-    public List<Category> findAll(){
-        return repository.findAll();
+    public List<CategoryDTO> findAll(){
+        List<Category> entity = repository.findAll();
+        return entity.stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
     }
 
-    public Category findById(Long id) {
-        Optional<Category> obj = repository.findById(id);
-        return obj.get();
+    public CategoryDTO findById(Long id) {
+        Optional<Category> entity = repository.findById(id);
+        if (entity.isPresent()) {
+            return new CategoryDTO(entity.get());
+        } else {
+            throw new ResourceNotFoundException(id);
+        }
     }
 
-    public Category insert(Category obj){
-        return repository.save(obj);
+    @Transactional
+    public CategoryDTO insert(Category obj){
+        try {
+            Category entity = repository.save(obj);
+            return new CategoryDTO(entity);
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 
+    @Transactional
     public void delete(Long id){
         try {
             repository.deleteById(id);
@@ -41,13 +56,21 @@ public class CategoryService {
         }
     }
 
-    public Category update(Long id, Category obj){
-        Category entity = repository.getReferenceById(id);
-        updateData(entity, obj);
-        return repository.save(entity);
+    @Transactional
+    public CategoryDTO update(Long id, Category obj){
+        try {
+            Category entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+            updateData(entity, obj);
+            Category savedEntity = repository.save(entity);
+            return new CategoryDTO(savedEntity);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public void updateData(Category entity, Category obj){
         entity.setName(obj.getName());
     }
+
 }

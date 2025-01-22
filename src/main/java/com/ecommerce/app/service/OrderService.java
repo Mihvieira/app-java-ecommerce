@@ -1,5 +1,6 @@
 package com.ecommerce.app.service;
 
+import com.ecommerce.app.dto.OrderDTO;
 import com.ecommerce.app.dto.OrderUserDTO;
 import com.ecommerce.app.entities.Order;
 import com.ecommerce.app.repository.OrderRepository;
@@ -11,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -21,21 +22,32 @@ public class OrderService {
     @Autowired
     private OrderRepository repository;
 
-    public List<Order> findAll(){
-        return repository.findAll();
+    public List<OrderDTO> findAll() {
+        List<Order> entity = repository.findAll();
+        return entity.stream().map(x -> new OrderDTO(x)).collect(Collectors.toList());
     }
 
-    public Optional<Order> findById(Long id) {
-        return repository.findById(id);
+    public OrderDTO findById(Long id) {
+        Optional<Order> entity = repository.findById(id);
+        if (entity.isPresent()) {
+            return new OrderDTO(entity.get());
+        } else {
+            throw new ResourceNotFoundException(id);
+        }
     }
 
     @Transactional
-    public Order insert(Order obj){
-        return repository.save(obj);
+    public OrderDTO insert(Order obj) {
+        try {
+            Order entity = repository.save(obj);
+            return new OrderDTO(entity);
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 
     @Transactional
-    public void delete(Long id){
+    public void delete(Long id) {
         try {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
@@ -46,28 +58,25 @@ public class OrderService {
     }
 
     @Transactional
-    public Order update(Long id, Order obj){
-        Order entity = new Order();
+    public OrderDTO update(Long id, Order obj) {
         try {
-            entity = repository.getReferenceById(id);
+            Order entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
             updateData(entity, obj);
-            return repository.save(entity);
-            
+            Order savedEntity = repository.save(entity);
+            return new OrderDTO(savedEntity);
         } catch (RuntimeException e) {
             e.printStackTrace();
-            return entity;
+            throw e;
         }
-            
     }
 
-    @Transactional
-    public void updateData(Order entity, Order obj){
+    public void updateData(Order entity, Order obj) {
         entity.setClient(obj.getClient());
         entity.setMoment(obj.getMoment());
         entity.setOrderStatus(obj.getOrderStatus());
     }
 
-    public List<OrderUserDTO> findOrdersByClient(Long client_id){
+    public List<OrderUserDTO> findOrdersByClient(Long client_id) {
         try {
             List<OrderUserDTO> listOusers = repository.findOrdersByClient(client_id);
             return listOusers;
@@ -75,7 +84,7 @@ public class OrderService {
             throw new ResourceNotFoundException(client_id);
         } catch (RuntimeException e) {
             e.printStackTrace();
-            return Collections.emptyList();
+            throw e;
         }
     }
 

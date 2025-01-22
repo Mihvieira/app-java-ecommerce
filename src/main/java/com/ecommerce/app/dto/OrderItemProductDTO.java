@@ -1,35 +1,36 @@
 package com.ecommerce.app.dto;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 
 public class OrderItemProductDTO {
 
-    private Integer IdOrder;
+    private Long IdOrder;
     private Instant moment;
     private Integer orderStatus;
     private String nameProduct;
     private Integer quantity;
     private Double unitPrice;
     private Double total;
-    
+
     public OrderItemProductDTO() {
     }
 
-    public OrderItemProductDTO(Integer idOrder, Instant moment, Integer orderStatus, String nameProduct, Integer quantity, Double unitPrice, Double total) {
+    public OrderItemProductDTO(Long idOrder, OffsetDateTime moment, Integer orderStatus,
+            Integer quantity, Double unitPrice, String nameProduct) {
         IdOrder = idOrder;
-        this.moment = moment;
+        this.moment = moment.toInstant();
         this.orderStatus = orderStatus;
         this.nameProduct = nameProduct;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
-        this.total = total;
     }
 
-    public Integer getIdOrder() {
+    public Long getIdOrder() {
         return IdOrder;
     }
 
-    public void setIdOrder(Integer idOrder) {
+    public void setIdOrder(Long idOrder) {
         IdOrder = idOrder;
     }
 
@@ -73,13 +74,8 @@ public class OrderItemProductDTO {
         this.unitPrice = unitPrice;
     }
 
-    public Double getTotal() {
-        return total;
+    public Double getTotal(){
+        return this.quantity * this.unitPrice;
     }
 
-    public void setTotal(Double total) {
-        this.total = total;
-    }
-
-    
 }
