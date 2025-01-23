@@ -83,14 +83,11 @@ public class TestConfig {
 ```
 
 ## Executando a Aplicação
-Para executar a aplicação, você pode usar o Maven ou o Gradle. Certifique-se de que todas as dependências estão corretamente configuradas no arquivo pom.xml ou build.gradle.
+Para executar a aplicação, você pode usar o Maven. Certifique-se de que todas as dependências estão corretamente configuradas no arquivo pom.xml.
 
 ```
 # Usando Maven
 mvn spring-boot:run
-
-# Usando Gradle
-gradle bootRun
 
 ```
 
