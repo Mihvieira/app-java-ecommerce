@@ -4,8 +4,13 @@ import com.ecommerce.app.dto.UserDTO;
 import com.ecommerce.app.dto.UserMinDTO;
 import com.ecommerce.app.entities.User;
 import com.ecommerce.app.repository.UserRepository;
+import com.ecommerce.app.service.exceptions.DatabaseException;
 import com.ecommerce.app.service.exceptions.ResourceNotFoundException;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -47,8 +52,10 @@ public class UserService {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
+        } catch (DataIntegrityViolationException e){
+            throw new DatabaseException(e.getMessage());
         } catch (RuntimeException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -58,8 +65,9 @@ public class UserService {
             updateData(entity, obj);
             User savedEntity = repository.save(entity);
             return new UserDTO(savedEntity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(id);   
         } catch (RuntimeException e) {
-            e.printStackTrace();
             throw e;
         }
     }

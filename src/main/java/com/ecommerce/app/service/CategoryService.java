@@ -3,11 +3,14 @@ package com.ecommerce.app.service;
 import com.ecommerce.app.dto.CategoryDTO;
 import com.ecommerce.app.entities.Category;
 import com.ecommerce.app.repository.CategoryRepository;
+import com.ecommerce.app.service.exceptions.DatabaseException;
 import com.ecommerce.app.service.exceptions.ResourceNotFoundException;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -51,8 +54,10 @@ public class CategoryService {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
+        } catch (DataIntegrityViolationException e){
+            throw new DatabaseException(e.getMessage());
         } catch (RuntimeException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -63,8 +68,9 @@ public class CategoryService {
             updateData(entity, obj);
             Category savedEntity = repository.save(entity);
             return new CategoryDTO(savedEntity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(id);   
         } catch (RuntimeException e) {
-            e.printStackTrace();
             throw e;
         }
     }

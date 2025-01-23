@@ -5,11 +5,14 @@ import com.ecommerce.app.dto.ProductDTO;
 import com.ecommerce.app.entities.Order;
 import com.ecommerce.app.entities.Product;
 import com.ecommerce.app.repository.ProductRepository;
+import com.ecommerce.app.service.exceptions.DatabaseException;
 import com.ecommerce.app.service.exceptions.ResourceNotFoundException;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -52,8 +55,10 @@ public class ProductService {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
+        } catch (DataIntegrityViolationException e){
+            throw new DatabaseException(e.getMessage());
         } catch (RuntimeException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -63,8 +68,9 @@ public class ProductService {
             updateData(entity, obj);
             Product savedEntity = repository.save(entity);
             return new ProductDTO(savedEntity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(id);   
         } catch (RuntimeException e) {
-            e.printStackTrace();
             throw e;
         }
     }

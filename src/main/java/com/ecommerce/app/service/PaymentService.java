@@ -1,15 +1,21 @@
 package com.ecommerce.app.service;
 
+import com.ecommerce.app.dto.PaymentDTO;
 import com.ecommerce.app.entities.Payment;
 import com.ecommerce.app.repository.PaymentRepository;
+import com.ecommerce.app.service.exceptions.DatabaseException;
 import com.ecommerce.app.service.exceptions.ResourceNotFoundException;
 
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PaymentService {
@@ -17,17 +23,27 @@ public class PaymentService {
     @Autowired
     private PaymentRepository repository;
 
-    public List<Payment> findAll(){
-        return repository.findAll();
+    public List<PaymentDTO> findAll(){
+        List<Payment> entity = repository.findAll();
+        return entity.stream().map(x -> new PaymentDTO(x)).collect(Collectors.toList());
     }
 
-    public Payment findById(Long id) {
-        Optional<Payment> obj = repository.findById(id);
-        return obj.get();
+    public PaymentDTO findById(Long id) {
+        Optional<Payment> entity = repository.findById(id);
+        if (entity.isPresent()) {
+            return new PaymentDTO(entity.get());
+        } else {
+            throw new ResourceNotFoundException(id);
+        }
     }
 
-    public Payment insert(Payment obj){
-        return repository.save(obj);
+    public PaymentDTO insert(Payment obj){
+        try {
+            Payment entity = repository.save(obj);
+            return new PaymentDTO(entity);
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 
     public void delete(Long id){
@@ -35,15 +51,26 @@ public class PaymentService {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
+        } catch (DataIntegrityViolationException e){
+            throw new DatabaseException(e.getMessage());
         } catch (RuntimeException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
     }
 
-    public Payment update(Long id, Payment obj){
-        Payment entity = repository.getReferenceById(id);
-        updateData(entity, obj);
-        return repository.save(entity);
+    public PaymentDTO update(Long id, Payment obj){
+        try {
+            Payment entity = repository.getReferenceById(id);
+            updateData(entity, obj);
+            Payment savedEntity = repository.save(entity);
+            return new PaymentDTO(savedEntity);
+            
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(id); 
+
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 
     public void updateData(Payment entity, Payment obj){

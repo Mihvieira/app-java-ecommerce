@@ -2,21 +2,21 @@ package com.ecommerce.app.dto;
 
 import java.time.Instant;
 
-import com.ecommerce.app.entities.Order;
+import com.ecommerce.app.entities.Payment;
 
 public class PaymentDTO {
 
     private Long id;
     private Instant moment;
-    private Order order;
+    private Long order_id;
 
     public PaymentDTO() {
     }
 
-    public PaymentDTO(Long id, Instant moment, Order order) {
-        this.id = id;
-        this.moment = moment;
-        this.order = order;
+    public PaymentDTO(Payment entity) {
+        setId(entity.getId());
+        setMoment(entity.getMoment());
+        setOrder_id(entity.getOrder().getId());
     }
 
     public Long getId() {
@@ -35,15 +35,13 @@ public class PaymentDTO {
         this.moment = moment;
     }
 
-    public Order getOrder() {
-        return order;
+    public Long getOrder_id() {
+        return order_id;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setOrder_id(Long order_id) {
+        this.order_id = order_id;
     }
 
-    
-    
 
 }
