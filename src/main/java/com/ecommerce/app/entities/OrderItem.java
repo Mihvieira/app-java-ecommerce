@@ -5,11 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name="tb_order_item")
+@NoArgsConstructor
 public class OrderItem implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -17,9 +20,6 @@ public class OrderItem implements Serializable {
     private OrderItemPK id = new OrderItemPK();
     private Integer quantity;
     private Double price;
-
-    public OrderItem() {
-    }
 
     public OrderItem(Order order, Product product, Integer quantity, Double price) {
         id.setOrder(order);

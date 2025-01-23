@@ -4,36 +4,47 @@ import com.ecommerce.app.entities.OrderItem;
 
 public class OrderItemDTO {
 
-    private Long id_order;
-    private Long id_product;
+    private Long order_id;
+    private Long product_id;
     private Integer quantity;
     private Double price;
 
     public OrderItemDTO() {
     }
 
+    public OrderItemDTO(Long order_id, Long product_id, Integer quantity, Double price) {
+        this.order_id = order_id;
+        this.product_id = product_id;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
     public OrderItemDTO(OrderItem entity){
-        setId_order(entity.getOrder().getId());
-        setId_product(entity.getProduct().getId());
+        if (entity.getId().getOrder() != null && entity.getId().getProduct() != null) {
+            setOrder_id(entity.getId().getOrder().getId());
+        }
+        if (entity.getId().getProduct() != null) {
+            setProduct_id(entity.getId().getProduct().getId());
+        }
         setQuantity(entity.getQuantity());
         setPrice(entity.getPrice());
     }
 
-    
-    public Long getId_order() {
-        return id_order;
+
+    public Long getOrder_id() {
+        return order_id;
     }
 
-    public void setId_order(Long id_order) {
-        this.id_order = id_order;
+    public void setOrder_id(Long order_id) {
+        this.order_id = order_id;
     }
 
-    public Long getId_product() {
-        return id_product;
+    public Long getProduct_id() {
+        return product_id;
     }
 
-    public void setId_product(Long id_product) {
-        this.id_product = id_product;
+    public void setProduct_id(Long product_id) {
+        this.product_id = product_id;
     }
 
     public Integer getQuantity() {

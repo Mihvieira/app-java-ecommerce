@@ -1,6 +1,5 @@
 package com.ecommerce.app.service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,8 +14,6 @@ import com.ecommerce.app.entities.OrderItem;
 import com.ecommerce.app.repository.OrderItemRepository;
 import com.ecommerce.app.service.exceptions.DatabaseException;
 import com.ecommerce.app.service.exceptions.ResourceNotFoundException;
-
-import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,12 +42,11 @@ public class OrderItemService {
     }
 
     @Transactional
-    public OrderItemDTO insert(OrderItem obj){
+    public void insert(OrderItemDTO obj){
          try {
-            OrderItem entity = repository.save(obj);
-            return new OrderItemDTO(entity);
-        } catch (RuntimeException e) {
-            throw e;
+            repository.saveItens(obj.getOrder_id(), obj.getProduct_id(), obj.getQuantity(), obj.getPrice());
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -60,8 +56,8 @@ public class OrderItemService {
             repository.deleteByOrder(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -72,9 +68,8 @@ public class OrderItemService {
             return list;
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            return Collections.emptyList();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -86,33 +81,33 @@ public class OrderItemService {
             throw new ResourceNotFoundException(id);
         } catch (DataIntegrityViolationException e){
             throw new DatabaseException(e.getMessage());
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
     @Transactional
-    public List<OrderItemDTO> update(Long id, OrderItem obj) {
+    public OrderItemDTO update(Long order_id, Long product_id, OrderItemDTO obj) {
         try {
-            List<OrderItem> entity = repository.findByIdOrder(id);
-            entity.forEach(x -> updateData(x, obj));
-            List<OrderItemDTO> savedEntities = entity.stream()
-                .map(repository::save)
-                .map(OrderItemDTO::new)
-                .collect(Collectors.toList());
-            return savedEntities;
-        } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException(id);   
-        } catch (RuntimeException e) {
-            throw e;
+            OrderItem entity = repository.findByIdOrderAndProduct(order_id, product_id);
+            if (entity == null) {
+                throw new ResourceNotFoundException(order_id);
+            }
+            updateData(entity, obj);
+            entity = repository.save(entity);
+            return new OrderItemDTO(entity);
+        } catch (NullPointerException e) {
+            throw new RuntimeException(e.getMessage());  
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 
-    public void updateData(OrderItem entity, OrderItem obj) {
+    public void updateData(OrderItem entity, OrderItemDTO obj) {
+        entity.getId().getOrder().setId(obj.getOrder_id());
+        entity.getId().getProduct().setId(obj.getProduct_id());
         entity.setPrice(obj.getPrice());
         entity.setQuantity(obj.getQuantity());
-        entity.setProduct(obj.getProduct());
-        entity.setOrder(obj.getOrder());
     }
 
 }

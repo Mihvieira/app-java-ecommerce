@@ -2,7 +2,6 @@ package com.ecommerce.app.controller;
 
 import com.ecommerce.app.dto.ProductDTO;
 import com.ecommerce.app.entities.Product;
-import com.ecommerce.app.entities.User;
 import com.ecommerce.app.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,5 @@
 package com.ecommerce.app.controller;
 
-import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +12,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.ecommerce.app.dto.OrderItemDTO;
 import com.ecommerce.app.dto.OrderItemProductDTO;
-import com.ecommerce.app.entities.OrderItem;
 import com.ecommerce.app.service.OrderItemService;
 
 @RestController
@@ -52,10 +48,9 @@ public class OrderItemController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderItemDTO> insert(@RequestBody OrderItem obj){
-        OrderItemDTO entity =  orderItemService.insert(obj);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(entity.getId_order()).toUri();
-        return ResponseEntity.created(uri).body(entity);
+    public ResponseEntity<Void> insert(@RequestBody OrderItemDTO obj){
+        orderItemService.insert(obj);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(value="{id}")
@@ -64,9 +59,9 @@ public class OrderItemController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value="{id}")
-    public ResponseEntity<List<OrderItemDTO>> update(@PathVariable Long id, @RequestBody OrderItem obj){
-        var entity = orderItemService.update(id, obj);
+    @PutMapping(value="{order_id}-{product_id}")
+    public ResponseEntity<OrderItemDTO> update(@PathVariable("order_id") Long order_id, @PathVariable("product_id") Long product_id, @RequestBody OrderItemDTO obj){
+        OrderItemDTO entity = orderItemService.update(order_id, product_id, obj);
         return ResponseEntity.ok().body(entity);
     }
 }
