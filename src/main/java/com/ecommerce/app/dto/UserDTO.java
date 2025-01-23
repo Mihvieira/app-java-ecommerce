@@ -1,9 +1,6 @@
 package com.ecommerce.app.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.ecommerce.app.entities.Order;
+import com.ecommerce.app.entities.User;
 
 public class UserDTO {
 
@@ -12,18 +9,16 @@ public class UserDTO {
     private String email;
     private String phone;
     private String password;
-    private List<Order> orders = new ArrayList<>();
 
     public UserDTO() {
     }
 
-    public UserDTO(Long id, String name, String email, String phone, String password, List<Order> orders) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-        this.password = password;
-        this.orders = orders;
+    public UserDTO(User entity){
+        setId(entity.getId());
+        setName(entity.getName());
+        setEmail(entity.getEmail());
+        setPassword(entity.getPassword());
+        setPhone(entity.getPhone());
     }
 
     public Long getId() {
@@ -66,12 +61,5 @@ public class UserDTO {
         this.password = password;
     }
 
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
 
 } 

@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.ecommerce.app.entities.Category;
-import com.ecommerce.app.entities.OrderItem;
+import com.ecommerce.app.entities.Product;
 
 public class ProductDTO implements Serializable{
     private static final long serialVersionUID = 1L;
@@ -16,24 +16,19 @@ public class ProductDTO implements Serializable{
     private Double price;
     private String imgUrl;
     private Set<Category> categories = new HashSet<>();
-    private Set<OrderItem> items = new HashSet<>();
 
     
     public ProductDTO() {
     }
 
-
-    public ProductDTO(Long id, String name, String description, Double price, String imgUrl, Set<Category> categories,
-            Set<OrderItem> items) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.imgUrl = imgUrl;
-        this.categories = categories;
-        this.items = items;
+    public ProductDTO(Product entity){
+        setId(entity.getId());
+        setName(entity.getName());
+        setPrice(entity.getPrice());
+        setDescription(entity.getDescription());
+        setCategories(entity.getCategories());
+        setImgUrl(entity.getImgUrl());
     }
-
 
     public Long getId() {
         return id;
@@ -93,17 +88,6 @@ public class ProductDTO implements Serializable{
     public void setCategories(Set<Category> categories) {
         this.categories = categories;
     }
-
-
-    public Set<OrderItem> getItems() {
-        return items;
-    }
-
-
-    public void setItems(Set<OrderItem> items) {
-        this.items = items;
-    }
-
     
 
 }

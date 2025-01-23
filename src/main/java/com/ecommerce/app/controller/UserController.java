@@ -1,5 +1,7 @@
 package com.ecommerce.app.controller;
 
+import com.ecommerce.app.dto.UserDTO;
+import com.ecommerce.app.dto.UserMinDTO;
 import com.ecommerce.app.entities.User;
 import com.ecommerce.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,20 +20,20 @@ public class UserController {
     private UserService service;
 
     @GetMapping
-    public ResponseEntity<List<User>> findAll(){
-        List<User> list = service.findAll();
+    public ResponseEntity<List<UserMinDTO>> findAll(){
+        List<UserMinDTO> list = service.findAll();
         return ResponseEntity.ok().body(list);
     }
 
     @GetMapping(value="{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id){
-        User obj = service.findById(id);
+    public ResponseEntity<UserMinDTO> findById(@PathVariable Long id){
+        UserMinDTO obj = service.findById(id);
         return ResponseEntity.ok().body(obj);
     }
 
     @PostMapping
-    public ResponseEntity<User> insert(@RequestBody User obj){
-        var user =  service.insert(obj);
+    public ResponseEntity<UserDTO> insert(@RequestBody User obj){
+        UserDTO user =  service.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(uri).body(user);
     }
@@ -43,8 +45,8 @@ public class UserController {
     }
 
     @PutMapping(value="{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User obj){
-        var user = service.update(id, obj);
+    public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody User obj){
+        UserDTO user = service.update(id, obj);
         return ResponseEntity.ok().body(user);
     }
 }

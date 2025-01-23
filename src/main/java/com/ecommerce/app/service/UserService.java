@@ -1,5 +1,7 @@
 package com.ecommerce.app.service;
 
+import com.ecommerce.app.dto.UserDTO;
+import com.ecommerce.app.dto.UserMinDTO;
 import com.ecommerce.app.entities.User;
 import com.ecommerce.app.repository.UserRepository;
 import com.ecommerce.app.service.exceptions.ResourceNotFoundException;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -16,17 +19,27 @@ public class UserService {
     @Autowired
     private UserRepository repository;
 
-    public List<User> findAll(){
-        return repository.findAll();
+    public List<UserMinDTO> findAll(){
+        List<User> entity = repository.findAll();
+        return entity.stream().map(x -> new UserMinDTO(x)).collect(Collectors.toList());
     }
 
-    public User findById(Long id){
-        Optional<User> obj = repository.findById(id);
-        return obj.orElseThrow(() -> new ResourceNotFoundException(id));
+    public UserMinDTO findById(Long id){
+        Optional<User> entity = repository.findById(id);
+        if (entity.isPresent()) {
+            return new UserMinDTO(entity.get());
+        } else {
+            throw new ResourceNotFoundException(id);
+        }
     }
 
-    public User insert(User obj){
-        return repository.save(obj);
+    public UserDTO insert(User obj){
+        try {
+            User entity = repository.save(obj);
+            return new UserDTO(entity);
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 
     public void delete(Long id){
@@ -39,10 +52,16 @@ public class UserService {
         }
     }
 
-    public User update(Long id, User obj){
-        User entity = repository.getReferenceById(id);
-        updateData(entity, obj);
-        return repository.save(entity);
+    public UserDTO update(Long id, User obj){
+        try {
+            User entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+            updateData(entity, obj);
+            User savedEntity = repository.save(entity);
+            return new UserDTO(savedEntity);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public void updateData(User entity, User obj){

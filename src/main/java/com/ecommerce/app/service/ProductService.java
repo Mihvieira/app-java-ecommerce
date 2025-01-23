@@ -1,8 +1,13 @@
 package com.ecommerce.app.service;
 
+import com.ecommerce.app.dto.OrderDTO;
+import com.ecommerce.app.dto.ProductDTO;
+import com.ecommerce.app.entities.Order;
 import com.ecommerce.app.entities.Product;
 import com.ecommerce.app.repository.ProductRepository;
 import com.ecommerce.app.service.exceptions.ResourceNotFoundException;
+
+import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -10,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -17,17 +23,28 @@ public class ProductService {
     @Autowired
     private ProductRepository repository;
 
-    public List<Product> findAll(){
-        return repository.findAll();
+    public List<ProductDTO> findAll(){
+        List<Product> entity = repository.findAll();
+        return entity.stream().map(x -> new ProductDTO(x)).collect(Collectors.toList());
     }
 
-    public Product findById(Long id) {
-        Optional<Product> obj = repository.findById(id);
-        return obj.get();
+    public ProductDTO findById(Long id) {
+        Optional<Product> entity = repository.findById(id);
+        if (entity.isPresent()) {
+            return new ProductDTO(entity.get());
+        } else {
+            throw new ResourceNotFoundException(id);
+        }
     }
 
-    public Product insert(Product obj){
-        return repository.save(obj);
+    @Transactional
+    public ProductDTO insert(Product obj){
+        try {
+            Product entity = repository.save(obj);
+            return new ProductDTO(entity);
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 
     public void delete(Long id){
@@ -40,10 +57,16 @@ public class ProductService {
         }
     }
 
-    public Product update(Long id, Product obj){
-        Product entity = repository.getReferenceById(id);
-        updateData(entity, obj);
-        return repository.save(entity);
+    public ProductDTO update(Long id, Product obj){
+        try {
+            Product entity = repository.getReferenceById(id);
+            updateData(entity, obj);
+            Product savedEntity = repository.save(entity);
+            return new ProductDTO(savedEntity);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public void updateData(Product entity, Product obj){

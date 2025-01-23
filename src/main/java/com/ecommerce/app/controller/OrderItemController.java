@@ -15,10 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.ecommerce.app.dto.OrderDTO;
 import com.ecommerce.app.dto.OrderItemDTO;
 import com.ecommerce.app.dto.OrderItemProductDTO;
-import com.ecommerce.app.entities.Order;
 import com.ecommerce.app.entities.OrderItem;
 import com.ecommerce.app.service.OrderItemService;
 
@@ -35,7 +33,7 @@ public class OrderItemController {
         return ResponseEntity.ok().body(obj);
     }
 
-    @GetMapping(value = "detail/{id}") //fail argument mismatch
+    @GetMapping(value = "detail/{id}")
     public ResponseEntity<List<OrderItemProductDTO>> getAllOrdersItems(@PathVariable Long id) {
         List<OrderItemProductDTO> obj = orderItemService.findAllOrderItems(id);
         return ResponseEntity.ok().body(obj);

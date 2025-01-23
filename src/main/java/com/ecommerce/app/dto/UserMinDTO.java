@@ -1,23 +1,22 @@
 package com.ecommerce.app.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.ecommerce.app.entities.Order;
+import com.ecommerce.app.entities.User;
 
 public class UserMinDTO {
 
     private String name;
-    private List<Order> orders = new ArrayList<>();
+    private String email;
+    private String phone;
 
     
     public UserMinDTO() {
     }
 
 
-    public UserMinDTO(String name, List<Order> orders) {
-        this.name = name;
-        this.orders = orders;
+    public UserMinDTO(User entity){
+        setName(entity.getName());
+        setEmail(entity.getEmail());
+        setPhone(entity.getPhone());
     }
 
 
@@ -31,14 +30,24 @@ public class UserMinDTO {
     }
 
 
-    public List<Order> getOrders() {
-        return orders;
+    public String getEmail() {
+        return email;
     }
 
 
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
 
+    public String getPhone() {
+        return phone;
+    }
+
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    
 }
