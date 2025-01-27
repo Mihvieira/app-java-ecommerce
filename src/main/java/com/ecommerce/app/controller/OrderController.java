@@ -18,22 +18,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
-/**
- * OrderController is a REST controller that handles HTTP requests for managing orders.
- * It provides endpoints to perform CRUD operations on orders.
- * 
- * Endpoints:
- * - GET /orders: Retrieve a list of all orders.
- * - GET /orders/{id}: Retrieve a specific order by its ID.
- * - GET /orders/users/{id_client}: Retrieve orders associated with a specific client.
- * - POST /orders: Create a new order.
- * - DELETE /orders/{id}: Delete an order by its ID.
- * - PUT /orders/{id}: Update an existing order by its ID.
- * 
- * This controller uses OrderService to perform the business logic.
- * 
- */
-
 @RestController
 @RequestMapping(value = "/orders")
 public class OrderController {
@@ -72,8 +56,8 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value="{id}")
-    public ResponseEntity<OrderDTO> update(@PathVariable Long id, @RequestBody OrderDTO obj){
+    @PutMapping
+    public ResponseEntity<OrderDTO> update(@RequestBody OrderDTO obj){
         var entity = service.insert(obj);
         return ResponseEntity.ok().body(entity);
     }

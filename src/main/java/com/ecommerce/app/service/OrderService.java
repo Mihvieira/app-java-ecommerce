@@ -1,8 +1,10 @@
 package com.ecommerce.app.service;
 
 import com.ecommerce.app.dto.OrderDTO;
+import com.ecommerce.app.dto.OrderItemDTO;
 import com.ecommerce.app.dto.OrderUserDTO;
 import com.ecommerce.app.entities.Order;
+import com.ecommerce.app.entities.OrderItem;
 import com.ecommerce.app.entities.User;
 import com.ecommerce.app.repository.OrderRepository;
 import com.ecommerce.app.repository.UserRepository;

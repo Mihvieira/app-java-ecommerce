@@ -1,7 +1,11 @@
 package com.ecommerce.app.service;
 
+import com.ecommerce.app.dto.OrderDTO;
 import com.ecommerce.app.dto.PaymentDTO;
+import com.ecommerce.app.entities.Order;
 import com.ecommerce.app.entities.Payment;
+import com.ecommerce.app.entities.User;
+import com.ecommerce.app.repository.OrderRepository;
 import com.ecommerce.app.repository.PaymentRepository;
 import com.ecommerce.app.service.exceptions.DatabaseException;
 import com.ecommerce.app.service.exceptions.ResourceNotFoundException;
@@ -11,6 +15,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +27,8 @@ public class PaymentService {
 
     @Autowired
     private PaymentRepository repository;
+    @Autowired
+    private OrderRepository orderRepository;
 
     public List<PaymentDTO> findAll(){
         List<Payment> entity = repository.findAll();
@@ -37,12 +44,20 @@ public class PaymentService {
         }
     }
 
-    public PaymentDTO insert(Payment obj){
+    public PaymentDTO insert(PaymentDTO obj){
         try {
-            Payment entity = repository.save(obj);
-            return new PaymentDTO(entity);
-        } catch (RuntimeException e) {
-            throw e;
+           Payment entity = new Payment();
+            Order order = orderRepository.findById(obj.getOrder_id())
+                    .orElseThrow(() -> new ResourceNotFoundException(obj.getOrder_id()));
+            entity.setOrder(order);
+            entity.setMoment(obj.getMoment());
+            return new PaymentDTO(repository.save(entity));
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Database integrity violation: " + e.getMessage());
+        } catch (HttpMessageNotReadableException e) {
+            throw new RuntimeException("Invalid message format: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error: " + e.getMessage());
         }
     }
 
@@ -57,24 +72,5 @@ public class PaymentService {
             throw new RuntimeException(e.getMessage());
         }
     }
-
-    public PaymentDTO update(Long id, Payment obj){
-        try {
-            Payment entity = repository.getReferenceById(id);
-            updateData(entity, obj);
-            Payment savedEntity = repository.save(entity);
-            return new PaymentDTO(savedEntity);
-            
-        } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException(id); 
-
-        } catch (RuntimeException e) {
-            throw e;
-        }
-    }
-
-    public void updateData(Payment entity, Payment obj){
-        entity.setMoment(obj.getMoment());
-        entity.setOrder(obj.getOrder());
-    }
+    
 }

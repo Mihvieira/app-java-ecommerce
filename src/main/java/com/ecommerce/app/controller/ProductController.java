@@ -44,7 +44,7 @@ public class ProductController {
         return ResponseEntity.created(uri).body(product);
     }
 
-    @DeleteMapping(value="{id}") // fail violation constraint
+    @DeleteMapping(value="{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id){
         service.delete(id);
         return ResponseEntity.noContent().build();
