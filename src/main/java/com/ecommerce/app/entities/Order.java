@@ -1,7 +1,5 @@
 package com.ecommerce.app.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -9,6 +7,8 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "tb_order")
@@ -18,19 +18,19 @@ public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
     private Instant moment;
     private Integer orderStatus;
-    @JsonIgnore
+    //@JsonIgnore
     @ManyToOne
     @JoinColumn(name = "client_id")
     private User client;
-    @JsonIgnore
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    //@JsonIgnore
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Payment payment;
     @JsonIgnore
-    @OneToMany(mappedBy = "id.order")
+    @OneToMany(mappedBy = "id.order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderItem> items = new HashSet<>();
+    
 
     public Order() {
     }
@@ -58,8 +58,10 @@ public class Order implements Serializable {
         this.moment = moment;
     }
 
-    public void setOrderStatus(Integer orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setOrderStatus(OrderStatus orderStatus) {
+        if(orderStatus != null){
+            this.orderStatus = orderStatus.getStatus();
+        }
     }
 
     public User getClient() {
@@ -82,10 +84,17 @@ public class Order implements Serializable {
         return OrderStatus.valueOf(orderStatus);
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
-        if(orderStatus != null){
-            this.orderStatus = orderStatus.getStatus();
-        }
+
+    // Method to add an item to the order
+    public void addItem(OrderItem item) {
+        items.add(item);
+        item.setOrder(this);
+    }
+
+    // Method to remove an item from the order
+    public void removeItem(OrderItem item) {
+        items.remove(item);
+        item.setOrder(null);
     }
 
     public Set<OrderItem> getItems() {

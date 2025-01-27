@@ -3,20 +3,21 @@ package com.ecommerce.app.service;
 import com.ecommerce.app.dto.OrderDTO;
 import com.ecommerce.app.dto.OrderUserDTO;
 import com.ecommerce.app.entities.Order;
+import com.ecommerce.app.entities.User;
 import com.ecommerce.app.repository.OrderRepository;
+import com.ecommerce.app.repository.UserRepository;
 import com.ecommerce.app.service.exceptions.DatabaseException;
 import com.ecommerce.app.service.exceptions.ResourceNotFoundException;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,28 +25,37 @@ public class OrderService {
 
     @Autowired
     private OrderRepository repository;
+    @Autowired
+    private UserRepository userRepository;
 
     public List<OrderDTO> findAll() {
         List<Order> entity = repository.findAll();
-        return entity.stream().map(x -> new OrderDTO(x)).collect(Collectors.toList());
+        return entity.stream().map(OrderDTO::new).collect(Collectors.toList());
     }
 
     public OrderDTO findById(Long id) {
-        Optional<Order> entity = repository.findById(id);
-        if (entity.isPresent()) {
-            return new OrderDTO(entity.get());
-        } else {
-            throw new ResourceNotFoundException(id);
-        }
+        Order entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id));
+        return new OrderDTO(entity);
     }
 
     @Transactional
-    public OrderDTO insert(Order obj) {
+    public OrderDTO insert(OrderDTO dados) {
+        validateOrderDTO(dados);
         try {
-            Order entity = repository.save(obj);
-            return new OrderDTO(entity);
-        } catch (RuntimeException e) {
-            throw e;
+            Order entity = new Order();
+            User client = userRepository.findById(dados.getClientId())
+                    .orElseThrow(() -> new ResourceNotFoundException(dados.getClientId()));
+            entity.setClient(client);
+            entity.setMoment(dados.getMoment());
+            entity.setOrderStatus(dados.getOrderStatus());
+            return new OrderDTO(repository.save(entity));
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Database integrity violation: " + e.getMessage());
+        } catch (HttpMessageNotReadableException e) {
+            throw new RuntimeException("Invalid message format: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error: " + e.getMessage());
         }
     }
 
@@ -55,42 +65,30 @@ public class OrderService {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
-        } catch (DataIntegrityViolationException e){
-            throw new DatabaseException(e.getMessage());
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Database integrity violation: " + e.getMessage());
         }
     }
 
-    @Transactional
-    public OrderDTO update(Long id, Order obj) {
-        try {
-            Order entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
-            updateData(entity, obj);
-            Order savedEntity = repository.save(entity);
-            return new OrderDTO(savedEntity);
-        } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException(id);   
-        } catch (RuntimeException e) {
-            throw e;
+    private void validateOrderDTO(OrderDTO dados) {
+        if (dados.getClientId() == null) {
+            throw new IllegalArgumentException("Client ID cannot be null");
         }
-    }
-
-    public void updateData(Order entity, Order obj) {
-        entity.setClient(obj.getClient());
-        entity.setMoment(obj.getMoment());
-        entity.setOrderStatus(obj.getOrderStatus());
+        if (dados.getMoment() == null) {
+            throw new IllegalArgumentException("Order moment cannot be null");
+        }
+        if (dados.getOrderStatus() == null) {
+            throw new IllegalArgumentException("Order status cannot be null");
+        }
     }
 
     public List<OrderUserDTO> findOrdersByClient(Long client_id) {
         try {
-            List<OrderUserDTO> listOusers = repository.findOrdersByClient(client_id);
-            return listOusers;
+            return repository.findOrdersByClient(client_id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(client_id);
         } catch (RuntimeException e) {
-            e.printStackTrace();
-            throw e;
+            throw new RuntimeException(e.getMessage());
         }
     }
 

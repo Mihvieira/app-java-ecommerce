@@ -1,8 +1,6 @@
 package com.ecommerce.app.service;
 
-import com.ecommerce.app.dto.OrderDTO;
 import com.ecommerce.app.dto.ProductDTO;
-import com.ecommerce.app.entities.Order;
 import com.ecommerce.app.entities.Product;
 import com.ecommerce.app.repository.ProductRepository;
 import com.ecommerce.app.service.exceptions.DatabaseException;
@@ -46,7 +44,7 @@ public class ProductService {
             Product entity = repository.save(obj);
             return new ProductDTO(entity);
         } catch (RuntimeException e) {
-            throw e;
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -55,8 +53,8 @@ public class ProductService {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
-        } catch (DataIntegrityViolationException e){
-            throw new DatabaseException(e.getMessage());
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Database integrity violation: " + e.getMessage());
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage());
         }

@@ -18,9 +18,24 @@ import java.net.URI;
 import java.util.List;
 import com.ecommerce.app.entities.Category;
 
+/**
+ * REST controller for managing categories.
+ * Provides endpoints for CRUD operations on categories.
+ * 
+ * Endpoints:
+ * - GET /categories: Retrieve all categories.
+ * - GET /categories/{id}: Retrieve a category by its ID.
+ * - POST /categories: Create a new category.
+ * - DELETE /categories/{id}: Delete a category by its ID.
+ * - PUT /categories/{id}: Update a category by its ID.
+ * 
+ */
+
 @RestController
 @RequestMapping(value = "/categories")
 public class CategoryController {
+
+
 
     @Autowired
     private CategoryService service;

@@ -25,26 +25,26 @@ public class ProductController {
     @Autowired
     private ProductService service;
 
-    @GetMapping
+    @GetMapping //fail categories
     public ResponseEntity<List<ProductDTO>> findAll(){
         List<ProductDTO> list = service.findAll();
         return ResponseEntity.ok().body(list);
     }
 
-    @GetMapping(value="{id}")
+    @GetMapping(value="{id}")//fail - categories
     public ResponseEntity<ProductDTO> findById(@PathVariable Long id){
         ProductDTO obj = service.findById(id);
         return ResponseEntity.ok().body(obj);
     }
 
-    @PostMapping
+    @PostMapping 
     public ResponseEntity<ProductDTO> insert(@RequestBody Product obj){
         ProductDTO product =  service.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(product.getId()).toUri();
         return ResponseEntity.created(uri).body(product);
     }
 
-    @DeleteMapping(value="{id}")
+    @DeleteMapping(value="{id}") // fail violation constraint
     public ResponseEntity<Void> delete(@PathVariable Long id){
         service.delete(id);
         return ResponseEntity.noContent().build();

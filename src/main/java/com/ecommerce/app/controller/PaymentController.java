@@ -37,7 +37,7 @@ public class PaymentController {
         return ResponseEntity.ok().body(obj);
     }
 
-    @PostMapping
+    @PostMapping //fail same as put error 
     public ResponseEntity<PaymentDTO> insert(@RequestBody Payment obj){
         PaymentDTO entity =  service.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(entity.getId()).toUri();
@@ -50,7 +50,7 @@ public class PaymentController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value="{id}")
+    @PutMapping(value="{id}") //fail "JSON parse error: Cannot deserialize value of type `java.time.Instant` from String \"2024-01-23T22:38:43.682374Z\": Failed to deserialize java.time.Instant: (java.time.format.DateTimeParseException) Text '2024-01-23T22:38:43.682374Z' could not be parsed at index 19",
     public ResponseEntity<PaymentDTO> update(@PathVariable Long id, @RequestBody Payment obj){
         var entity = service.update(id, obj);
         return ResponseEntity.ok().body(entity);

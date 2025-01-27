@@ -8,17 +8,24 @@ public enum OrderStatus {
     DELIVERED(4),
     CANCELED(5);
 
-    private final int status;
+    private Integer status;
 
-    OrderStatus(int status) {
+    OrderStatus(Integer status) {
         this.status = status;
     }
 
-    public int getStatus() {
+    OrderStatus() {
+    }
+
+    public Integer getStatus() {
         return status;
     }
 
-    public static OrderStatus valueOf(int status){
+    public void setOrderStatus(Integer status){
+        this.status = status;
+    }
+
+    public static OrderStatus valueOf(Integer status){
         for (OrderStatus value: OrderStatus.values()){
             if(value.getStatus() == status){
                 return value;

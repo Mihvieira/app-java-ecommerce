@@ -16,6 +16,26 @@ import com.ecommerce.app.dto.OrderItemDTO;
 import com.ecommerce.app.dto.OrderItemProductDTO;
 import com.ecommerce.app.service.OrderItemService;
 
+/**
+ * OrderItemController is a REST controller that handles HTTP requests for managing order items.
+ * It provides endpoints to perform CRUD operations on order items.
+ * 
+ * Endpoints:
+ * - GET /order-item: Retrieve all order items.
+ * - GET /order-item/detail/{id}: Retrieve all order items with product details for a specific order.
+ * - GET /order-item/product/{id}: Retrieve all order items for a specific product.
+ * - GET /order-item/order/{id}: Retrieve all order items for a specific order.
+ * - POST /order-item: Insert a new order item.
+ * - DELETE /order-item/{id}: Delete an order item by its ID.
+ * - PUT /order-item/{order_id}-{product_id}: Update an existing order item by order ID and product ID.
+ * 
+ * This controller uses OrderItemService to perform the business logic.
+ * 
+ * @see com.ecommerce.app.service.OrderItemService
+ * @see com.ecommerce.app.dto.OrderItemDTO
+ * @see com.ecommerce.app.dto.OrderItemProductDTO
+ */
+
 @RestController
 @RequestMapping(value = "/order-item")
 public class OrderItemController {

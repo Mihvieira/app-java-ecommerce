@@ -4,11 +4,15 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 
 import com.ecommerce.app.entities.OrderStatus;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class OrderUserDTO {
 
     private String userName;
     private Long orderId;
+    @JsonDeserialize
+    @JsonSerialize
     private Instant orderMoment;
     private Integer orderStatus;
 

@@ -1,10 +1,7 @@
 package com.ecommerce.app.controller;
 
-import com.ecommerce.app.dto.CategoryDTO;
 import com.ecommerce.app.dto.OrderDTO;
 import com.ecommerce.app.dto.OrderUserDTO;
-import com.ecommerce.app.entities.Category;
-import com.ecommerce.app.entities.Order;
 import com.ecommerce.app.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +18,21 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+/**
+ * OrderController is a REST controller that handles HTTP requests for managing orders.
+ * It provides endpoints to perform CRUD operations on orders.
+ * 
+ * Endpoints:
+ * - GET /orders: Retrieve a list of all orders.
+ * - GET /orders/{id}: Retrieve a specific order by its ID.
+ * - GET /orders/users/{id_client}: Retrieve orders associated with a specific client.
+ * - POST /orders: Create a new order.
+ * - DELETE /orders/{id}: Delete an order by its ID.
+ * - PUT /orders/{id}: Update an existing order by its ID.
+ * 
+ * This controller uses OrderService to perform the business logic.
+ * 
+ */
 
 @RestController
 @RequestMapping(value = "/orders")
@@ -48,7 +60,7 @@ public class OrderController {
     }
     
     @PostMapping
-    public ResponseEntity<OrderDTO> insert(@RequestBody Order obj){
+    public ResponseEntity<OrderDTO> insert(@RequestBody OrderDTO obj){
         OrderDTO entity =  service.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(entity.getId()).toUri();
         return ResponseEntity.created(uri).body(entity);
@@ -61,8 +73,8 @@ public class OrderController {
     }
 
     @PutMapping(value="{id}")
-    public ResponseEntity<OrderDTO> update(@PathVariable Long id, @RequestBody Order obj){
-        var entity = service.update(id, obj);
+    public ResponseEntity<OrderDTO> update(@PathVariable Long id, @RequestBody OrderDTO obj){
+        var entity = service.insert(obj);
         return ResponseEntity.ok().body(entity);
     }
 }
