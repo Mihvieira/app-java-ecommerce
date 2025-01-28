@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -20,13 +21,13 @@ public class Order implements Serializable {
     private Long id;
     private Instant moment;
     private Integer orderStatus;
-    //@JsonIgnore
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "client_id")
     private User client;
-    //@JsonIgnore
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Payment payment;
+    @JsonIgnore
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Payment> payment;
     @JsonIgnore
     @OneToMany(mappedBy = "id.order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderItem> items = new HashSet<>();
@@ -72,12 +73,12 @@ public class Order implements Serializable {
         this.client = client;
     }
 
-    public Payment getPayment() {
+    public List<Payment> getPayment() {
         return payment;
     }
 
-    public void setPayment(Payment payment) {
-        this.payment = payment;
+    public void setPayment(List<Payment> payments) {
+        this.payment = payments;
     }
 
     public OrderStatus getOrderStatus() {

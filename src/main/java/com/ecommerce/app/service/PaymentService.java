@@ -1,16 +1,12 @@
 package com.ecommerce.app.service;
 
-import com.ecommerce.app.dto.OrderDTO;
 import com.ecommerce.app.dto.PaymentDTO;
 import com.ecommerce.app.entities.Order;
 import com.ecommerce.app.entities.Payment;
-import com.ecommerce.app.entities.User;
 import com.ecommerce.app.repository.OrderRepository;
 import com.ecommerce.app.repository.PaymentRepository;
 import com.ecommerce.app.service.exceptions.DatabaseException;
 import com.ecommerce.app.service.exceptions.ResourceNotFoundException;
-
-import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -18,6 +14,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,12 +43,18 @@ public class PaymentService {
 
     public PaymentDTO insert(PaymentDTO obj){
         try {
-           Payment entity = new Payment();
+            Payment entity = new Payment();
             Order order = orderRepository.findById(obj.getOrder_id())
                     .orElseThrow(() -> new ResourceNotFoundException(obj.getOrder_id()));
+            if (obj.getId() != null){
+                entity.setId(obj.getId());
+            }
             entity.setOrder(order);
             entity.setMoment(obj.getMoment());
-            return new PaymentDTO(repository.save(entity));
+            // Associar o pagamento salvo ao pedido
+            order.setPayment(Arrays.asList(entity));
+            orderRepository.save(order);
+            return new PaymentDTO(order.getPayment().getLast());
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Database integrity violation: " + e.getMessage());
         } catch (HttpMessageNotReadableException e) {

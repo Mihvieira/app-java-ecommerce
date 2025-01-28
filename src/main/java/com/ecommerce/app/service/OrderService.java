@@ -48,10 +48,14 @@ public class OrderService {
             Order entity = new Order();
             User client = userRepository.findById(dados.getClientId())
                     .orElseThrow(() -> new ResourceNotFoundException(dados.getClientId()));
+            if (dados.getId() != null) {
+                entity.setId(dados.getId());
+            }
             entity.setClient(client);
             entity.setMoment(dados.getMoment());
             entity.setOrderStatus(dados.getOrderStatus());
-            return new OrderDTO(repository.save(entity));
+            Order savOrder = repository.save(entity);
+            return new OrderDTO(savOrder);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Database integrity violation: " + e.getMessage());
         } catch (HttpMessageNotReadableException e) {

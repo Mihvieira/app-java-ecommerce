@@ -16,7 +16,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import com.ecommerce.app.entities.Payment;
 
 @RestController
 @RequestMapping(value = "/payments")

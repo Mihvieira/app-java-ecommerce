@@ -1,11 +1,13 @@
 package com.ecommerce.app.dto;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 import com.ecommerce.app.entities.Payment;
 
-public class PaymentDTO {
-
+public class PaymentDTO implements Serializable{
+    private static final long serialVersionUID = 1L;
+    
     private Long id;
     private Instant moment;
     private Long order_id;

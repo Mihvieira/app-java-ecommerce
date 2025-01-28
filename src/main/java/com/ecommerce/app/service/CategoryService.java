@@ -44,7 +44,7 @@ public class CategoryService {
             Category entity = repository.save(obj);
             return new CategoryDTO(entity);
         } catch (RuntimeException e) {
-            throw e;
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -71,7 +71,7 @@ public class CategoryService {
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);   
         } catch (RuntimeException e) {
-            throw e;
+            throw new RuntimeException(e.getMessage());
         }
     }
 
