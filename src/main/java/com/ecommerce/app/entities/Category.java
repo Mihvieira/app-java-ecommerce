@@ -33,7 +33,7 @@ public class Category implements Serializable {
 
     public Category(Long id, String name) {
         this.id = id;
-        this.name = name;
+        this.name = name.toUpperCase();
     }
 
     public Long getId() {
@@ -49,7 +49,7 @@ public class Category implements Serializable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.toUpperCase();
     }
 
     public Set<Product> getProducts() {

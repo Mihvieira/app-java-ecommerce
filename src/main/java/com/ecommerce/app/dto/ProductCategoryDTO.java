@@ -1,31 +1,31 @@
 package com.ecommerce.app.dto;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import com.ecommerce.app.entities.Category;
 import com.ecommerce.app.entities.Product;
 
-public class ProductDTO implements Serializable{
+public class ProductCategoryDTO implements Serializable{
     private static final long serialVersionUID = 1L;
 
     private Long id;
     private String name;
     private String description;
     private Double price;
+    private List<String> category;
     private String imgUrl;
 
     
-    public ProductDTO() {
+    public ProductCategoryDTO() {
     }
 
-    public ProductDTO(Product entity){
-        setId(entity.getId());
-        setName(entity.getName());
-        setPrice(entity.getPrice());
-        setDescription(entity.getDescription());
-        setImgUrl(entity.getImgUrl());
+
+    public ProductCategoryDTO(Long id, String name, String description, Double price, List<String> category) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.category = category;
     }
 
     public Long getId() {
@@ -68,6 +68,16 @@ public class ProductDTO implements Serializable{
     }
 
 
+    public List<String> getCategory() {
+        return category;
+    }
+
+
+    public void setCategory(List<String> category) {
+        this.category = category;
+    }
+
+    
     public String getImgUrl() {
         return imgUrl;
     }

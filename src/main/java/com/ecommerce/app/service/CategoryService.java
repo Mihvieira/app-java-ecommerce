@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +36,15 @@ public class CategoryService {
             return new CategoryDTO(entity.get());
         } else {
             throw new ResourceNotFoundException(id);
+        }
+    }
+
+    public CategoryDTO findByName(String name) {
+        Optional<Category> entity = repository.findByName(name);
+        if (entity.isPresent()) {
+            return new CategoryDTO(entity.get());
+        } else {
+            throw new ResourceNotFoundException(name);
         }
     }
 
@@ -77,6 +87,23 @@ public class CategoryService {
 
     public void updateData(Category entity, Category obj){
         entity.setName(obj.getName());
+    }
+
+    public long countCategories() {
+        return repository.count();
+    }
+
+    public boolean existsCategory(Long id) {
+        return repository.existsById(id);
+    }
+
+    public boolean existsCategoryByName(String name) {
+        return repository.findByName(name).isPresent();
+    }
+
+    public List<CategoryDTO> findAllSortedByName() {
+        List<Category> entity = repository.findAll(Sort.by("name"));
+        return entity.stream().map(CategoryDTO::new).collect(Collectors.toList());
     }
 
 }
