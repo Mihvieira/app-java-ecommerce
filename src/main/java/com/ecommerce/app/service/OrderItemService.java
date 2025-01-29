@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.ecommerce.app.dto.OrderItemDTO;
 import com.ecommerce.app.dto.OrderItemProductDTO;
 import com.ecommerce.app.entities.OrderItem;
+import com.ecommerce.app.entities.User;
 import com.ecommerce.app.repository.OrderItemRepository;
 import com.ecommerce.app.service.exceptions.DatabaseException;
 import com.ecommerce.app.service.exceptions.ResourceNotFoundException;
@@ -22,6 +23,7 @@ public class OrderItemService {
 
     @Autowired
     private OrderItemRepository repository;
+
 
     @Transactional(readOnly = true)
     public List<OrderItemDTO> findAll(){
@@ -42,9 +44,10 @@ public class OrderItemService {
     }
 
     @Transactional
-    public void insert(OrderItemDTO obj){
+    public void insert(OrderItemDTO dados){
+        validateOrderItemDTO(dados);
          try {
-            repository.saveItens(obj.getOrder_id(), obj.getProduct_id(), obj.getQuantity(), obj.getPrice());
+            repository.saveItens(dados.getOrder_id(), dados.getProduct_id(), dados.getQuantity(), dados.getPrice());
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -86,14 +89,29 @@ public class OrderItemService {
         }
     }
 
+    private void validateOrderItemDTO(OrderItemDTO dados) {
+        if (dados.getOrder_id() == null) {
+            throw new IllegalArgumentException("Order Id cannot be null");
+        }
+        if (dados.getProduct_id() == null) {
+            throw new IllegalArgumentException("Product Id cannot be null");
+        }
+        if (dados.getPrice() == null) {
+            throw new IllegalArgumentException("Price cannot be null");
+        }
+        if (dados.getQuantity() == null) {
+            dados.setQuantity(1);
+        }
+    }
+
     @Transactional
-    public OrderItemDTO update(Long order_id, Long product_id, OrderItemDTO obj) {
+    public OrderItemDTO update(OrderItemDTO dados) {
         try {
-            OrderItem entity = repository.findByIdOrderAndProduct(order_id, product_id);
+            OrderItem entity = repository.findByIdOrderAndProduct(dados.getOrder_id(), dados.getProduct_id());
             if (entity == null) {
-                throw new ResourceNotFoundException(order_id);
+                throw new ResourceNotFoundException(dados.getOrder_id());
             }
-            updateData(entity, obj);
+            updateData(entity, dados);
             entity = repository.save(entity);
             return new OrderItemDTO(entity);
         } catch (NullPointerException e) {
@@ -103,11 +121,11 @@ public class OrderItemService {
         }
     }
 
-    public void updateData(OrderItem entity, OrderItemDTO obj) {
-        entity.getId().getOrder().setId(obj.getOrder_id());
-        entity.getId().getProduct().setId(obj.getProduct_id());
-        entity.setPrice(obj.getPrice());
-        entity.setQuantity(obj.getQuantity());
+    public void updateData(OrderItem entity, OrderItemDTO dados) {
+        entity.getId().getOrder().setId(dados.getOrder_id());
+        entity.getId().getProduct().setId(dados.getProduct_id());
+        entity.setPrice(dados.getPrice());
+        entity.setQuantity(dados.getQuantity());
     }
 
 }

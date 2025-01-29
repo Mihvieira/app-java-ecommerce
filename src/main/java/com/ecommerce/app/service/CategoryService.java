@@ -13,10 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,68 +25,55 @@ public class CategoryService {
     @Autowired
     private CategoryRepository repository;
 
-    public List<CategoryDTO> findAll(){
+    public List<CategoryDTO> findAll() {
         List<Category> entity = repository.findAll();
         return entity.stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
     }
 
     public CategoryDTO findById(Long id) {
-        Optional<Category> entity = repository.findById(id);
-        if (entity.isPresent()) {
-            return new CategoryDTO(entity.get());
-        } else {
-            throw new ResourceNotFoundException(id);
-        }
+        Category entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id));
+        return new CategoryDTO(entity);
     }
 
     public CategoryDTO findByName(String name) {
-        Optional<Category> entity = repository.findByName(name);
-        if (entity.isPresent()) {
-            return new CategoryDTO(entity.get());
-        } else {
-            throw new ResourceNotFoundException(name);
-        }
+        Category entity = repository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException(name));
+
+        return new CategoryDTO(entity);
     }
 
     @Transactional
-    public CategoryDTO insert(Category obj){
+    public CategoryDTO insert(Category dados) {
         try {
-            Category entity = repository.save(obj);
-            return new CategoryDTO(entity);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+            Category entity = new Category();
+            if (dados.getId() != null) {
+                entity.setId(dados.getId());
+            }
+            entity.setName(dados.getName());
+            return new CategoryDTO(repository.save(entity));
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(dados.getId());
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Database integrity violation: " + e.getMessage());
+        } catch (HttpMessageNotReadableException e) {
+            throw new RuntimeException("Invalid message format: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error: " + e.getMessage());
         }
     }
 
     @Transactional
-    public void delete(Long id){
+    public void delete(Long id) {
         try {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
-        } catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new DatabaseException(e.getMessage());
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage());
         }
-    }
-
-    @Transactional
-    public CategoryDTO update(Long id, Category obj){
-        try {
-            Category entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
-            updateData(entity, obj);
-            Category savedEntity = repository.save(entity);
-            return new CategoryDTO(savedEntity);
-        } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException(id);   
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
-    public void updateData(Category entity, Category obj){
-        entity.setName(obj.getName());
     }
 
     public long countCategories() {

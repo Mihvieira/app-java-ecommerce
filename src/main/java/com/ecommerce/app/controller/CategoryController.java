@@ -37,6 +37,30 @@ public class CategoryController {
         return ResponseEntity.ok().body(obj);
     }
 
+    @GetMapping(value="/count")
+    public ResponseEntity<Long> countCategories(){
+        Long obj = service.countCategories();
+        return ResponseEntity.ok().body(obj);
+    }
+
+    @GetMapping(value="/exists/{id}")
+    public ResponseEntity<Boolean> existsCategoryById(@PathVariable Long id){
+        Boolean obj = service.existsCategory(id);
+        return ResponseEntity.ok().body(obj);
+    }
+
+    @GetMapping(value="/exists/{name}")
+    public ResponseEntity<Boolean> existsCategoryByName(@PathVariable String name){
+        Boolean obj = service.existsCategoryByName(name);
+        return ResponseEntity.ok().body(obj);
+    }
+
+    @GetMapping(value="/name")
+    public ResponseEntity<List<CategoryDTO>> findAllSortedByName(){
+        List<CategoryDTO> obj = service.findAllSortedByName();
+        return ResponseEntity.ok().body(obj);
+    }
+
     @PostMapping
     public ResponseEntity<CategoryDTO> insert(@RequestBody Category obj){
         CategoryDTO entity =  service.insert(obj);
@@ -50,9 +74,9 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value="{id}")
-    public ResponseEntity<CategoryDTO> update(@PathVariable Long id, @RequestBody Category obj){
-        var entity = service.update(id, obj);
+    @PutMapping
+    public ResponseEntity<CategoryDTO> update(@RequestBody Category obj){
+        var entity = service.insert(obj);
         return ResponseEntity.ok().body(entity);
     }
 }

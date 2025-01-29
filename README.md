@@ -309,7 +309,7 @@ Exemplo de Resposta
 }
 ```
 
-#### PUT /order-items/{order_id}-{product_id}
+#### PUT /order-items
 
 ```json
 {

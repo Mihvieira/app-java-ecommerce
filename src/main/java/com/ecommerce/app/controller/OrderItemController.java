@@ -79,9 +79,9 @@ public class OrderItemController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value="{order_id}-{product_id}")
-    public ResponseEntity<OrderItemDTO> update(@PathVariable("order_id") Long order_id, @PathVariable("product_id") Long product_id, @RequestBody OrderItemDTO obj){
-        OrderItemDTO entity = orderItemService.update(order_id, product_id, obj);
+    @PutMapping
+    public ResponseEntity<OrderItemDTO> update(@RequestBody OrderItemDTO obj){
+        OrderItemDTO entity = orderItemService.update(obj);
         return ResponseEntity.ok().body(entity);
     }
 }
