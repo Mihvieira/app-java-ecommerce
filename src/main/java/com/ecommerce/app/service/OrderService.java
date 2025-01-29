@@ -9,6 +9,7 @@ import com.ecommerce.app.repository.UserRepository;
 import com.ecommerce.app.service.exceptions.DatabaseException;
 import com.ecommerce.app.service.exceptions.ResourceNotFoundException;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,8 @@ public class OrderService {
             entity.setOrderStatus(dados.getOrderStatus());
             Order savOrder = repository.save(entity);
             return new OrderDTO(savOrder);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(dados.getId());
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Database integrity violation: " + e.getMessage());
         } catch (HttpMessageNotReadableException e) {

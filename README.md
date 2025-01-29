@@ -212,9 +212,11 @@ Exemplo de Resposta
 ```json
 [
     {
-        "name": "Nome",
-        "email": "e-mail",
-        "phone": "xxxxxxxx"
+        "id": "Id do usuário",
+        "name": "Usuário Exemplo",
+        "email": "usuario@example.com",
+        "phone": "xxxxxxxxx",
+        "password": "senha123"
     }
 ]
 ```
@@ -224,16 +226,18 @@ Exemplo de Resposta
 ```json
 {
     "id": "null",
-    "name": "Usuário Exemplo",
-    "email": "usuario@example.com",
+    "name": "Usuário Exemplo Atualizado",
+    "email": "usuario_atualizado@example.com",
+    "phone": "xxxxxxxxx",
     "password": "senha123"
 }
 ```
 
-#### PUT /users/{id}
+#### PUT /users
 
 ```json
 {
+    "id": "Id a ser atualizado",
     "name": "Usuário Exemplo Atualizado",
     "email": "usuario_atualizado@example.com",
     "phone": "xxxxxxxxx",
