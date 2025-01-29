@@ -22,8 +22,6 @@ import com.ecommerce.app.entities.Category;
 @RequestMapping(value = "/categories")
 public class CategoryController {
 
-
-
     @Autowired
     private CategoryService service;
 
