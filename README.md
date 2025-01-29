@@ -95,14 +95,14 @@ Exemplo de Resposta
 ```json
 [
     {
-        "id": 1,
-        "name": "The Lord of the Rings",
-        "description": "Lorem ipsum dolor sit amet, consectetur.",
+        "id": "id do produto",
+        "name": "Nome do Produto",
+        "description": "Descrição do produto",
         "price": 90.5,
         "category": [
-            "ELECTRONICS"
+            "Nome da categoria"
         ],
-        "imgUrl": null
+        "imgUrl": "url da imagem"
     }
 ]
 ```
